@@ -174,4 +174,6 @@ def test_openapi_schema_lists_only_expected_endpoints(offline_settings):
         "/api/permissions",
         "/api/audit-events",
         "/api/audit-events/{event_id}",
+        "/api/ai/capabilities",
+        "/api/ai/analyses",
     }

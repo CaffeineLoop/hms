@@ -15,8 +15,8 @@ from tests.conftest import PROJECT_ROOT, make_alembic_config
 pytestmark = pytest.mark.integration
 
 BASELINE = "0001"
-HEAD = "0008"  # Stage 6: audit trail and session hardening
-HISTORY = ["0008", "0007", "0006", "0005", "0004", "0003", "0002", "0001"]
+HEAD = "0009"  # Stage 7: AI assistant permission
+HISTORY = ["0009", "0008", "0007", "0006", "0005", "0004", "0003", "0002", "0001"]
 
 
 def current_revision(database_url: str) -> str | None:

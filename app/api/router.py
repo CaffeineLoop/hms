@@ -2,13 +2,14 @@
 
 from fastapi import APIRouter
 
-from app.api.routes import access, audit, auth, clinical, diagnostics, health, patients, staff, workflow
+from app.api.routes import access, ai, audit, auth, clinical, diagnostics, health, patients, staff, workflow
 
 api_router = APIRouter()
 api_router.include_router(health.router)
 api_router.include_router(auth.router)
 api_router.include_router(access.router)
 api_router.include_router(audit.router)
+api_router.include_router(ai.router)
 api_router.include_router(patients.router)
 api_router.include_router(clinical.router)
 api_router.include_router(diagnostics.router)

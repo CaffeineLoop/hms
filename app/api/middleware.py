@@ -32,7 +32,7 @@ SENSITIVE_READ_SEGMENTS = {
     "admissions", "audit-events",
 }
 # Successful calls to these are recorded by their services (explicit, richer events).
-EXPLICITLY_AUDITED_PREFIXES = ("/api/auth/", "/api/users", "/api/roles")
+EXPLICITLY_AUDITED_PREFIXES = ("/api/auth/", "/api/users", "/api/roles", "/api/ai/")
 
 
 def _resource(route: str | None, path_params: dict, location: str | None) -> tuple[str | None, str | None]:

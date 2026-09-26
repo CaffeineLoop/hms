@@ -19,6 +19,7 @@ from sqlalchemy.exc import (
 )
 
 from app.core.audit import request_context
+from app.services.ai_service import AIServiceUnavailable
 from app.core.errors import (
     AuthenticationError,
     BusinessValidationError,
@@ -43,6 +44,10 @@ async def _unauthenticated(request: Request, exc: AuthenticationError) -> JSONRe
 
 async def _forbidden(request: Request, exc: PermissionDeniedError) -> JSONResponse:
     return _error(status.HTTP_403_FORBIDDEN, exc.message)
+
+
+async def _ai_unavailable(request: Request, exc: AIServiceUnavailable) -> JSONResponse:
+    return _error(status.HTTP_503_SERVICE_UNAVAILABLE, str(exc))
 
 
 async def _rate_limited(request: Request, exc: RateLimitedError) -> JSONResponse:
@@ -127,6 +132,7 @@ async def _database(request: Request, exc: SQLAlchemyError) -> JSONResponse:
 def register_exception_handlers(app: FastAPI) -> None:
     app.add_exception_handler(RequestValidationError, _request_validation)
     app.add_exception_handler(RateLimitedError, _rate_limited)
+    app.add_exception_handler(AIServiceUnavailable, _ai_unavailable)
     app.add_exception_handler(Exception, _unhandled)
     app.add_exception_handler(AuthenticationError, _unauthenticated)
     app.add_exception_handler(PermissionDeniedError, _forbidden)

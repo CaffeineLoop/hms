@@ -78,8 +78,9 @@ class P(StrEnum):
 
     AUDIT_VIEW = "audit.view"  # Stage 6
 
+    AI_ANALYSIS = "ai.analysis"  # Stage 7
+
     # Reserved for later stages; seeded so roles can be prepared, not yet checked anywhere.
-    AI_ANALYSIS = "ai.analysis"
     AI_REVIEW = "ai.review"
 
 
@@ -125,7 +126,7 @@ DESCRIPTIONS: dict[P, str] = {
     P.ROLE_MANAGE: "Create, edit and deactivate roles",
     P.PERMISSION_MANAGE: "Grant and revoke role permissions",
     P.AUDIT_VIEW: "View the audit trail",
-    P.AI_ANALYSIS: "Run AI analysis (reserved for a later stage)",
+    P.AI_ANALYSIS: "Use the read-only AI clinical-analysis assistant",
     P.AI_REVIEW: "Review AI output (reserved for a later stage)",
 }
 

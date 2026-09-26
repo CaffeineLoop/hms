@@ -220,5 +220,5 @@ def test_route_permissions_come_from_the_catalog(monkeypatch):
         for call in calls:
             used |= set(getattr(call, "required_permissions", ()))
     assert used <= set(P)
-    reserved = {P.AI_ANALYSIS, P.AI_REVIEW}
+    reserved = {P.AI_REVIEW}
     assert set(P) - used == reserved  # every non-reserved permission guards at least one route

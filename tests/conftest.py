@@ -38,7 +38,9 @@ def make_alembic_config(database_url: str, script_location: Path | None = None) 
 def test_settings() -> Settings:
     try:
         settings = load_settings()
-        return build_test_settings(settings).model_copy(update={"login_max_failures_per_ip": 100_000})
+        # Stage 7: the deterministic offline model - the suite never calls a live LLM or needs a key.
+        return build_test_settings(settings).model_copy(update={
+            "login_max_failures_per_ip": 100_000, "llm_provider": "fake", "gemini_api_key": None})
     except (ConfigurationError, UnsafeTestDatabaseError) as exc:
         pytest.exit(f"Refusing to run database tests: {exc}", returncode=3)
 

@@ -7,3 +7,8 @@ alembic==1.20.0
 pydantic==2.13.5
 pydantic-settings==2.15.0
 tzdata==2026.4  # zoneinfo data on Windows; alembic.ini uses timezone = UTC
+
+# Stage 7 — AI assistant foundation (LangGraph orchestration, LangChain + Gemini integration)
+langgraph==1.2.12
+langchain-core==1.6.5
+langchain-google-genai==4.4.0

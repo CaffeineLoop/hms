@@ -11,6 +11,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app import __version__
+from app.ai.providers import build_model_factory
 from app.api.errors import register_exception_handlers
 from app.api.middleware import install_middleware
 from app.api.router import api_router
@@ -59,6 +60,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.settings = settings
     app.state.engine = engine
     app.state.session_factory = build_session_factory(engine)
+    app.state.ai_model_factory = build_model_factory(settings)  # Stage 7: configurable LLM provider
     app.include_router(api_router)
     register_exception_handlers(app)
     install_middleware(app)

@@ -74,6 +74,27 @@ class Settings(BaseSettings):
     login_max_failures_per_ip: int = Field(default=20, ge=1, le=100_000)
     login_lockout_minutes: int = Field(default=15, ge=1, le=1440)
 
+    # --- Stage 7: AI assistant (read-only clinical analysis) ---------------------------------
+    # Provider registry key: "gemini" (default), "fake" (deterministic, offline; tests/dev) or
+    # "disabled". The model id and key are configuration only - never hard-coded in logic.
+    llm_provider: str = "gemini"
+    llm_model: str = "gemini-3.8-flash"
+    gemini_api_key: SecretStr | None = None
+    llm_temperature: float = Field(default=0.1, ge=0.0, le=1.0)
+    llm_timeout_seconds: int = Field(default=30, ge=5, le=300)
+    llm_max_output_tokens: int = Field(default=2048, ge=256, le=16384)
+    ai_max_items_per_tool: int = Field(default=50, ge=1, le=500)
+    # Third-party tracing (e.g. LangSmith) would send patient data off-site; off unless allowed.
+    ai_allow_external_tracing: bool = False
+
+    @field_validator("llm_provider")
+    @classmethod
+    def _check_llm_provider(cls, value: str) -> str:
+        value = value.strip().lower()
+        if value not in {"gemini", "fake", "disabled"}:
+            raise ValueError("must be one of: gemini, fake, disabled")
+        return value
+
     # IANA zone used for calendar-date rules (e.g. date of birth not in the future).
     # Timestamps are always stored and returned in UTC regardless of this value.
     app_timezone: str = "UTC"
