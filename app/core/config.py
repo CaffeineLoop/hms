@@ -15,6 +15,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine import URL, make_url
 
 REQUIRED_DRIVER = "postgresql+psycopg"
+# Must match the provider registry in app/ai/providers.py (a unit test enforces this).
+LLM_PROVIDERS = frozenset({"gemini", "openrouter", "fake", "disabled"})
 
 
 class ConfigurationError(RuntimeError):
@@ -75,11 +77,15 @@ class Settings(BaseSettings):
     login_lockout_minutes: int = Field(default=15, ge=1, le=1440)
 
     # --- Stage 7: AI assistant (read-only clinical analysis) ---------------------------------
-    # Provider registry key: "gemini" (default), "fake" (deterministic, offline; tests/dev) or
-    # "disabled". The model id and key are configuration only - never hard-coded in logic.
+    # Provider registry key (app/ai/providers.py): "gemini" (default), "openrouter" (OpenAI-compatible
+    # API, e.g. Ling Sante), "fake" (deterministic, offline; tests/dev) or "disabled". The model id and
+    # keys are configuration only - never hard-coded in logic.
     llm_provider: str = "gemini"
     llm_model: str = "gemini-3.8-flash"
     gemini_api_key: SecretStr | None = None
+    # OpenRouter provider: key (secret, .env only) and OpenAI-compatible endpoint.
+    openrouter_api_key: SecretStr | None = None
+    openrouter_base_url: str = "https://openrouter.ai/api/v1"
     llm_temperature: float = Field(default=0.1, ge=0.0, le=1.0)
     llm_timeout_seconds: int = Field(default=30, ge=5, le=300)
     # Stage 8: 8192 (was 2048). Gemini 3.x "thinking" tokens count against this cap; with 2048 the
@@ -126,8 +132,16 @@ class Settings(BaseSettings):
     @classmethod
     def _check_llm_provider(cls, value: str) -> str:
         value = value.strip().lower()
-        if value not in {"gemini", "fake", "disabled"}:
-            raise ValueError("must be one of: gemini, fake, disabled")
+        if value not in LLM_PROVIDERS:
+            raise ValueError(f"must be one of: {', '.join(sorted(LLM_PROVIDERS))}")
+        return value
+
+    @field_validator("openrouter_base_url")
+    @classmethod
+    def _check_openrouter_base_url(cls, value: str) -> str:
+        value = value.strip().rstrip("/")
+        if not value.startswith("https://"):
+            raise ValueError("must be an https:// URL")
         return value
 
     # IANA zone used for calendar-date rules (e.g. date of birth not in the future).

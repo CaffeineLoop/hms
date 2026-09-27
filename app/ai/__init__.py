@@ -2,7 +2,7 @@
 
 Layout:
     schemas.py     request / response / validated model-output contracts
-    providers.py   configurable LLM provider registry (Gemini via LangChain; deterministic fake)
+    providers.py   configurable LLM provider registry (Gemini / OpenRouter via LangChain; deterministic fake)
     tools.py       read-only, patient-bound, permission-gated evidence tools (allowlist)
     guardrails.py  deterministic input and output policy checks
     prompts.py     system prompt and message template

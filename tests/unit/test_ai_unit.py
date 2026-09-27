@@ -28,7 +28,7 @@ PNUM = "PAT-000123"
 
 def settings(monkeypatch, **env):
     monkeypatch.setenv("DATABASE_URL", "postgresql+psycopg://hms_app:change-me@127.0.0.1:1/hms_dev")
-    for key in ("LLM_PROVIDER", "LLM_MODEL", "GEMINI_API_KEY"):
+    for key in ("LLM_PROVIDER", "LLM_MODEL", "GEMINI_API_KEY", "OPENROUTER_API_KEY", "OPENROUTER_BASE_URL"):
         monkeypatch.delenv(key, raising=False)
     for key, value in env.items():
         monkeypatch.setenv(key, value)
@@ -208,7 +208,7 @@ def test_model_is_configuration_not_code(monkeypatch):
 
 
 def test_provider_registry(monkeypatch):
-    assert set(PROVIDERS) == {"gemini", "fake", "disabled"}
+    assert set(PROVIDERS) == {"gemini", "openrouter", "fake", "disabled"}  # openrouter: provider integration
     assert isinstance(build_model_factory(settings(monkeypatch, LLM_PROVIDER="fake"))(), DeterministicClinicalModel)
     with pytest.raises(AIUnavailableError):
         build_model_factory(settings(monkeypatch, LLM_PROVIDER="disabled"))()

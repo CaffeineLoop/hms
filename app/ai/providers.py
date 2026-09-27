@@ -5,6 +5,8 @@ adding one later (another vendor, a local model) means adding a builder here and
 LLM_PROVIDER - no change to the graph, tools, guardrails or API.
 
     LLM_PROVIDER=gemini     ChatGoogleGenerativeAI (LangChain), model LLM_MODEL, key GEMINI_API_KEY
+    LLM_PROVIDER=openrouter ChatOpenAI (LangChain) against OpenRouter's OpenAI-compatible API,
+                            model LLM_MODEL, key OPENROUTER_API_KEY, endpoint OPENROUTER_BASE_URL
     LLM_PROVIDER=fake       DeterministicClinicalModel: offline, reproducible (tests, local dev)
     LLM_PROVIDER=disabled   the assistant reports itself unavailable (HTTP 503)
 
@@ -153,6 +155,25 @@ def _gemini(settings: Settings) -> BaseChatModel:
     )
 
 
+def _openrouter(settings: Settings) -> BaseChatModel:
+    """OpenRouter (OpenAI-compatible). No provider-side JSON-schema mode is requested (not every OpenRouter
+    model supports `response_format`); the output contract is enforced by the application's own parsing,
+    schema, grounding and semantic validation, exactly as for every other provider."""
+    if settings.openrouter_api_key is None or not settings.openrouter_api_key.get_secret_value().strip():
+        raise AIUnavailableError("OPENROUTER_API_KEY is not configured.")
+    from langchain_openai import ChatOpenAI
+
+    return ChatOpenAI(
+        model=settings.llm_model,
+        api_key=settings.openrouter_api_key,  # SecretStr: stays out of repr/logs
+        base_url=settings.openrouter_base_url,
+        temperature=settings.llm_temperature,
+        max_tokens=settings.llm_max_output_tokens,
+        timeout=settings.llm_timeout_seconds,
+        max_retries=1,
+    )
+
+
 def _fake(settings: Settings) -> BaseChatModel:
     return DeterministicClinicalModel()
 
@@ -163,6 +184,7 @@ def _disabled(settings: Settings) -> BaseChatModel:
 
 PROVIDERS: dict[str, Callable[[Settings], BaseChatModel]] = {
     "gemini": _gemini,
+    "openrouter": _openrouter,
     "fake": _fake,
     "disabled": _disabled,
 }

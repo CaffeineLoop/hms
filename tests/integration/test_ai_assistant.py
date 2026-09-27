@@ -102,7 +102,8 @@ def last_ai_event(test_engine, user) -> dict:
 # --- authorized analysis -------------------------------------------------------------------------------
 
 
-def test_authorized_analysis_is_grounded_structured_and_read_only(auth_client, doctor, chart, model, test_engine):
+def test_authorized_analysis_is_grounded_structured_and_read_only(auth_client, doctor, chart, model, test_engine,
+                                                                  test_settings):
     before = counts(test_engine)
     body = ok(analyze(auth_client, doctor, chart["patient"]["id"]))
     assert body["status"] == "COMPLETED" and body["reason_code"] is None
@@ -117,7 +118,7 @@ def test_authorized_analysis_is_grounded_structured_and_read_only(auth_client, d
     assert body["tools_used"] == ["get_patient_profile", "get_encounters", "get_observations", "get_conditions",
                                   "get_allergies", "get_medications", "get_lab_results", "get_reports",
                                   "get_clinical_notes"]
-    assert body["model"] == {"provider": "fake", "model": "gemini-3.8-flash"}
+    assert body["model"] == {"provider": "fake", "model": test_settings.llm_model}  # the configured id, any vendor
     assert "not a diagnosis, prescription or order" in body["disclaimer"]
     assert counts(test_engine) == before  # nothing was written
 
@@ -325,9 +326,9 @@ def test_ai_tools_run_in_a_read_only_transaction(test_engine):
 # --- capabilities / audit ----------------------------------------------------------------------------------
 
 
-def test_capabilities_list_only_read_only_tools(auth_client, client, make_user, doctor):
+def test_capabilities_list_only_read_only_tools(auth_client, client, make_user, doctor, test_settings):
     caps = ok(auth_client.get("/api/ai/capabilities", headers=doctor["headers"]))
-    assert caps["enabled"] is True and caps["provider"] == "fake" and caps["model"] == "gemini-3.8-flash"
+    assert caps["enabled"] is True and caps["provider"] == "fake" and caps["model"] == test_settings.llm_model
     assert all(t["read_only"] for t in caps["tools"]) and len(caps["tools"]) == 9
     assert all(t["available_to_you"] for t in caps["tools"])
     ok(client.post("/api/roles", json={"name": "AI_MIN", "permissions": [{"code": "ai.analysis"}]}), 201)
