@@ -18,6 +18,8 @@ CLINICAL_TABLES = (
 # Staff tables are referenced by clinical rows, so they are cleared after them.
 STAFF_TABLES = ("staff", "departments")
 # Auth rows reference staff; they go first. Roles/grants are reset to the seeded defaults.
+# Stage 8: stored AI risk analyses reference patients, users and staff; they go first of all.
+AI_TABLES = ("ai_risk_analyses",)
 AUTH_TABLES = ("auth_sessions", "user_roles", "users")
 
 
@@ -42,7 +44,7 @@ def clean_patients(test_engine: Engine) -> None:
     with test_engine.begin() as connection:
         # Grants may reference the users who made them, so they are cleared first.
         connection.execute(text("DELETE FROM role_permissions"))
-        for table in (*AUTH_TABLES, *CLINICAL_TABLES, "patients", *STAFF_TABLES):
+        for table in (*AI_TABLES, *AUTH_TABLES, *CLINICAL_TABLES, "patients", *STAFF_TABLES):
             connection.execute(text(f"DELETE FROM {table}"))
         reset_roles_to_defaults(connection)
 

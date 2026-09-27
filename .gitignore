@@ -16,3 +16,6 @@ venv/
 htmlcov/
 .idea/
 .vscode/
+
+# Local AI evaluation run outputs (Stage 9)
+reports/

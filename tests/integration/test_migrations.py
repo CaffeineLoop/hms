@@ -15,8 +15,8 @@ from tests.conftest import PROJECT_ROOT, make_alembic_config
 pytestmark = pytest.mark.integration
 
 BASELINE = "0001"
-HEAD = "0009"  # Stage 7: AI assistant permission
-HISTORY = ["0009", "0008", "0007", "0006", "0005", "0004", "0003", "0002", "0001"]
+HEAD = "0010"  # Stage 8: AI risk analysis review pathway
+HISTORY = ["0010", "0009", "0008", "0007", "0006", "0005", "0004", "0003", "0002", "0001"]
 
 
 def current_revision(database_url: str) -> str | None:
@@ -86,7 +86,7 @@ def test_head_creates_only_expected_tables(test_database_url, migrated_database)
         "lab_orders", "lab_samples", "lab_results", "reports", "prescriptions", "prescription_items",
         "departments", "staff", "appointments", "admissions", "admission_transfers", "workflow_tasks",
         "users", "roles", "permissions", "role_permissions", "user_roles", "auth_sessions",
-        "audit_events",
+        "audit_events", "ai_risk_analyses",
     }
     assert table_names(test_database_url) == {"alembic_version"} | domain
     assert set(Base.metadata.tables) == domain

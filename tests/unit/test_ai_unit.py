@@ -174,8 +174,8 @@ def test_request_schema():
     assert AIAnalysisRequest(patient_id=PID, analysis_type="CLINICAL_SUMMARY").question is None
     with pytest.raises(ValidationError, match="question is required"):
         AIAnalysisRequest(patient_id=PID, analysis_type="QUESTION")
-    with pytest.raises(ValidationError):
-        AIAnalysisRequest(patient_id=PID, analysis_type="FOUR_DAY_RISK")  # Stage 8, not available
+    # Stage 8: FOUR_DAY_RISK is available; its request rules are tested in test_ai_risk_unit.py
+    assert AIAnalysisRequest(patient_id=PID, analysis_type="FOUR_DAY_RISK").reference_at is None
     with pytest.raises(ValidationError):
         AIAnalysisRequest(patient_id=PID, analysis_type="QUESTION", question="x" * 2001)
     with pytest.raises(ValidationError):
@@ -259,8 +259,8 @@ def test_analysis_types_only_use_allowlisted_tools():
 def test_graph_structure():
     graph = build_graph(session=None, read_only_session=None, model=DeterministicClinicalModel(), items_per_tool=5)
     nodes = set(graph.get_graph().nodes) - {"__start__", "__end__"}
-    assert nodes == {"authorize", "check_request", "plan_tools", "gather_evidence", "check_evidence", "generate",
-                     "validate_output"}
+    assert nodes == {"authorize", "check_request", "plan_tools", "gather_evidence", "compute_signals",
+                     "check_evidence", "generate", "validate_output"}  # compute_signals: Stage 8
 
 
 def test_system_prompt_rules():

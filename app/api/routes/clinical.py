@@ -21,9 +21,10 @@ by its own id. There is no DELETE anywhere: clinical records are never removed.
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, Response, status
+from fastapi import APIRouter, BackgroundTasks, Depends, Query, Request, Response, status
 from sqlalchemy.orm import Session
 
+from app.api.ai_triggers import maybe_schedule_risk_analysis
 from app.api.auth import requires
 from app.api.authorship import bind_actor
 from app.core.permissions import TIMELINE_EVENT_PERMISSIONS, P
@@ -59,6 +60,7 @@ from app.services.clinical_record_service import (
     ConditionService,
     ObservationService,
 )
+from app.services.ai_service import OBSERVATION_CREATED
 from app.services.encounter_service import EncounterService
 from app.services.timeline_service import TimelineService
 
@@ -144,10 +146,14 @@ def cancel_encounter(encounter_id: uuid.UUID, data: EncounterCancel, service: En
 
 
 @router.post(f"{PATIENT}/observations", response_model=ObservationRead, status_code=status.HTTP_201_CREATED,
-             responses=_ERRORS, tags=["observations"], dependencies=[requires(P.OBSERVATION_CREATE)])
-def create_observation(patient_id: uuid.UUID, data: ObservationCreate, response: Response, service: Observations):
+             responses=_ERRORS, tags=["observations"])
+def create_observation(patient_id: uuid.UUID, data: ObservationCreate, response: Response, service: Observations,
+                       request: Request, background: BackgroundTasks,
+                       principal: Annotated[Principal, requires(P.OBSERVATION_CREATE)]):
     observation = service.create(patient_id, data)
     _created(response, "observations", observation.id)
+    # Stage 8: optional configured trigger (AI_RISK_EVENT_TRIGGERS); runs after this commit, as this user.
+    maybe_schedule_risk_analysis(request, background, principal, OBSERVATION_CREATED, patient_id, observation.id)
     return observation
 
 

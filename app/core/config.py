@@ -82,10 +82,45 @@ class Settings(BaseSettings):
     gemini_api_key: SecretStr | None = None
     llm_temperature: float = Field(default=0.1, ge=0.0, le=1.0)
     llm_timeout_seconds: int = Field(default=30, ge=5, le=300)
-    llm_max_output_tokens: int = Field(default=2048, ge=256, le=16384)
+    # Stage 8: 8192 (was 2048). Gemini 3.x "thinking" tokens count against this cap; with 2048 the
+    # structured four-day risk answer was cut off (finish_reason MAX_TOKENS) and correctly discarded.
+    llm_max_output_tokens: int = Field(default=8192, ge=256, le=16384)
     ai_max_items_per_tool: int = Field(default=50, ge=1, le=500)
     # Third-party tracing (e.g. LangSmith) would send patient data off-site; off unless allowed.
     ai_allow_external_tracing: bool = False
+
+    # --- Stage 8: four-day potential risk analysis ------------------------------------------------
+    # The horizon itself (4 days) is a fixed constant in app/ai/risk_signals.py, not a setting.
+    # Signal rule set (registry key). "demo-v1" is an explicitly UNVALIDATED prototype.
+    ai_risk_ruleset: str = "demo-v1"
+    # How far back before the reference time evidence is read for the risk analysis.
+    ai_risk_evidence_lookback_hours: int = Field(default=96, ge=24, le=168)
+    # Comma-separated event triggers; empty = manual analysis only. Supported: observation.created
+    ai_risk_event_triggers: str = ""
+    # Minimum minutes between two event-triggered analyses for the same patient.
+    ai_risk_trigger_cooldown_minutes: int = Field(default=30, ge=1, le=1440)
+
+    @field_validator("ai_risk_ruleset")
+    @classmethod
+    def _check_ruleset(cls, value: str) -> str:
+        from app.ai.risk_signals import RULESETS  # dependency-free module; imported lazily
+
+        if value not in RULESETS:
+            raise ValueError(f"must be one of: {', '.join(sorted(RULESETS))}")
+        return value
+
+    @field_validator("ai_risk_event_triggers")
+    @classmethod
+    def _check_triggers(cls, value: str) -> str:
+        triggers = {t.strip() for t in value.split(",") if t.strip()}
+        unknown = triggers - {"observation.created"}
+        if unknown:
+            raise ValueError(f"unsupported trigger(s): {', '.join(sorted(unknown))}")
+        return ",".join(sorted(triggers))
+
+    @property
+    def risk_triggers(self) -> frozenset[str]:
+        return frozenset(t for t in self.ai_risk_event_triggers.split(",") if t)
 
     @field_validator("llm_provider")
     @classmethod

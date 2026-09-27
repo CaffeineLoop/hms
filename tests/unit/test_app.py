@@ -176,4 +176,7 @@ def test_openapi_schema_lists_only_expected_endpoints(offline_settings):
         "/api/audit-events/{event_id}",
         "/api/ai/capabilities",
         "/api/ai/analyses",
+        "/api/ai/risk-analyses",  # Stage 8: AI review pathway
+        "/api/ai/risk-analyses/{analysis_id}",
+        "/api/ai/risk-analyses/{analysis_id}/review",
     }

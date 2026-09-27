@@ -12,4 +12,5 @@ pythonpath = ["."]
 addopts = "-ra --strict-markers"
 markers = [
     "integration: requires the isolated PostgreSQL test database (TEST_DATABASE_URL)",
+    "adversarial(category, expect): Stage 9 AI adversarial case (see tests/adversarial.py)",
 ]

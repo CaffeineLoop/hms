@@ -1,0 +1,117 @@
+{
+  "status": "ANALYSIS",
+  "analysis_type": "FOUR_DAY_RISK",
+  "patient_reference": "PAT-000003",
+  "reference_at": "2026-09-27T05:41:06+00:00",
+  "horizon_start": "2026-09-27T05:41:06+00:00",
+  "horizon_end": "2026-10-01T05:41:06+00:00",
+  "analysis_horizon_days": 4,
+  "summary": "Records for a 67-year-old male presenting with cough and fever (encounter:45262624-784c-40ac-b1b0-5f043cc30f27) reflect recent vital sign changes over the observation period. The patient demonstrated an elevated body temperature of 39.1 Cel (observation:fbdb8a53-e56a-4835-8c78-ec428d37794d), an elevated heart rate of 108 /min (observation:14248a53-aa22-4fb5-9d25-092025dffc1c), an increased respiratory rate of 25 /min (observation:891319ed-d2e7-4147-811b-4fea25d69571), and a decreased oxygen saturation of 92% (observation:6e91e4ee-6481-4348-aabd-b722dbe37d3c) at 2026-09-27T04:40:08Z. In addition, body temperature has trended upward across three consecutive readings (observation:b8a668db-3267-4e4b-b87e-1818958620f7, observation:b0bbff4c-976f-4eda-ae14-151d74b53f93, observation:fbdb8a53-e56a-4835-8c78-ec428d37794d). These findings may indicate a potential risk of clinical deterioration during the 4-day analysis horizon warranting clinician review.",
+  "risk_signals": [
+    {
+      "signal_id": "SIG-01",
+      "category": "VITAL_SIGN",
+      "priority": "MODERATE",
+      "explanation": "A body temperature reading of 39.1 Cel was recorded at 2026-09-27T04:40:08Z, which may represent hyperthermia and warrants clinical attention.",
+      "evidence": [
+        "observation:fbdb8a53-e56a-4835-8c78-ec428d37794d"
+      ]
+    },
+    {
+      "signal_id": "SIG-02",
+      "category": "VITAL_SIGN",
+      "priority": "MODERATE",
+      "explanation": "A respiratory rate of 25 /min was documented at 2026-09-27T04:40:08Z, which may indicate tachypnea and potential respiratory compromise.",
+      "evidence": [
+        "observation:891319ed-d2e7-4147-811b-4fea25d69571"
+      ]
+    },
+    {
+      "signal_id": "SIG-03",
+      "category": "VITAL_SIGN",
+      "priority": "MODERATE",
+      "explanation": "An oxygen saturation reading of 92% on room air or unspecified support was recorded at 2026-09-27T04:40:08Z, which may indicate mild hypoxemia.",
+      "evidence": [
+        "observation:6e91e4ee-6481-4348-aabd-b722dbe37d3c"
+      ]
+    },
+    {
+      "signal_id": "SIG-04",
+      "category": "VITAL_TREND",
+      "priority": "MODERATE",
+      "explanation": "Body temperature rose sequentially from 37.8 Cel to 38.4 Cel and then to 39.1 Cel across three consecutive observations, representing an upward trend that may warrant clinical reassessment.",
+      "evidence": [
+        "observation:b8a668db-3267-4e4b-b87e-1818958620f7",
+        "observation:b0bbff4c-976f-4eda-ae14-151d74b53f93",
+        "observation:fbdb8a53-e56a-4835-8c78-ec428d37794d"
+      ]
+    }
+  ],
+  "observed_trends": [
+    {
+      "description": "Body temperature progressively increased from 37.8 Cel at 2026-09-26T22:40:08Z to 38.4 Cel at 2026-09-27T01:40:08Z and 39.1 Cel at 2026-09-27T04:40:08Z.",
+      "evidence": [
+        "observation:b8a668db-3267-4e4b-b87e-1818958620f7",
+        "observation:b0bbff4c-976f-4eda-ae14-151d74b53f93",
+        "observation:fbdb8a53-e56a-4835-8c78-ec428d37794d"
+      ]
+    },
+    {
+      "description": "Respiratory rate increased from 20.0 /min at 2026-09-26T22:40:08Z to 25.0 /min at 2026-09-27T04:40:08Z.",
+      "evidence": [
+        "observation:7f871aab-e8e7-4d18-879b-cde8249a15fe",
+        "observation:891319ed-d2e7-4147-811b-4fea25d69571"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "source_id": "patient:90d59698-7248-4b09-bbac-090c74129e00",
+      "relevance": "Patient demographic data indicating a 67-year-old active male."
+    },
+    {
+      "source_id": "encounter:45262624-784c-40ac-b1b0-5f043cc30f27",
+      "relevance": "Outpatient department encounter initiated for cough and fever."
+    },
+    {
+      "source_id": "observation:fbdb8a53-e56a-4835-8c78-ec428d37794d",
+      "relevance": "Latest recorded body temperature of 39.1 Cel."
+    },
+    {
+      "source_id": "observation:b0bbff4c-976f-4eda-ae14-151d74b53f93",
+      "relevance": "Intermediate recorded body temperature of 38.4 Cel."
+    },
+    {
+      "source_id": "observation:b8a668db-3267-4e4b-b87e-1818958620f7",
+      "relevance": "Initial recorded body temperature of 37.8 Cel."
+    },
+    {
+      "source_id": "observation:891319ed-d2e7-4147-811b-4fea25d69571",
+      "relevance": "Latest respiratory rate measuring 25.0 /min."
+    },
+    {
+      "source_id": "observation:7f871aab-e8e7-4d18-879b-cde8249a15fe",
+      "relevance": "Initial respiratory rate measuring 20.0 /min."
+    },
+    {
+      "source_id": "observation:6e91e4ee-6481-4348-aabd-b722dbe37d3c",
+      "relevance": "Recorded oxygen saturation measuring 92.0%."
+    },
+    {
+      "source_id": "observation:14248a53-aa22-4fb5-9d25-092025dffc1c",
+      "relevance": "Recorded heart rate measuring 108.0 /min."
+    }
+  ],
+  "limitations": [
+    "No reading in the evidence window for: systolic_blood_pressure.",
+    "No released lab results in the evidence window.",
+    "The deterministic risk signal rules are from a demonstration rule set and are not clinically validated."
+  ],
+  "precautionary_suggestions": [
+    "Clinician may wish to review and reassess the patient's respiratory status, including work of breathing and oxygen saturation trends.",
+    "Clinician may wish to monitor and evaluate the patient's upward body temperature trend.",
+    "Clinician may wish to verify blood pressure measurements given the absence of systolic blood pressure documentation in the record."
+  ],
+  "requires_human_review": true,
+  "abstain_reason": null
+}

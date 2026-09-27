@@ -79,9 +79,7 @@ class P(StrEnum):
     AUDIT_VIEW = "audit.view"  # Stage 6
 
     AI_ANALYSIS = "ai.analysis"  # Stage 7
-
-    # Reserved for later stages; seeded so roles can be prepared, not yet checked anywhere.
-    AI_REVIEW = "ai.review"
+    AI_REVIEW = "ai.review"  # Stage 8: acknowledge / dismiss stored AI risk analyses
 
 
 DESCRIPTIONS: dict[P, str] = {
@@ -127,7 +125,7 @@ DESCRIPTIONS: dict[P, str] = {
     P.PERMISSION_MANAGE: "Grant and revoke role permissions",
     P.AUDIT_VIEW: "View the audit trail",
     P.AI_ANALYSIS: "Use the read-only AI clinical-analysis assistant",
-    P.AI_REVIEW: "Review AI output (reserved for a later stage)",
+    P.AI_REVIEW: "Review AI risk analyses (acknowledge or dismiss)",
 }
 
 # Timeline event type -> permission needed to see that type of event.

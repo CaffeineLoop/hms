@@ -5,6 +5,7 @@ Every model module must be imported here so that its tables are registered on
 """
 
 from app.db.base import Base
+from app.models.ai_review import AIRiskAnalysis
 from app.models.allergy import Allergy
 from app.models.audit import AuditEvent
 from app.models.auth import AuthSession, Permission, Role, RolePermission, User, UserRole
@@ -20,6 +21,7 @@ from app.models.staff import Department, Staff
 from app.models.workflow import Admission, AdmissionTransfer, Appointment, WorkflowTask
 
 __all__ = [
+    "AIRiskAnalysis",
     "AuditEvent",
     "AuthSession",
     "Permission",

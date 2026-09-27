@@ -6,6 +6,8 @@ tests/support.py aborts the run before any connection is made if that database
 is missing or could be the development database.
 """
 
+import json
+import os
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -22,6 +24,42 @@ from app.factory import create_app
 from tests.support import FULL_ACCESS, UnsafeTestDatabaseError, build_test_settings
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+
+# --- Stage 9: adversarial evaluation report ------------------------------------------------------
+
+_ADVERSARIAL_RESULTS: dict[str, dict] = {}
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+    marker = item.get_closest_marker("adversarial")
+    if marker is None or (report.when != "call" and report.passed):
+        return
+    reason = None
+    if report.failed:
+        reason = str(getattr(report.longrepr, "reprcrash", None) and report.longrepr.reprcrash.message
+                     or report.longrepr).splitlines()[0][:300]
+    _ADVERSARIAL_RESULTS[item.nodeid] = {
+        "category": marker.kwargs["category"], "expect": marker.kwargs["expect"],
+        "outcome": ("xfailed" if hasattr(report, "wasxfail") and report.skipped else "passed" if report.passed
+                    else "skipped" if report.skipped else "failed"),
+        "limitation": getattr(report, "wasxfail", None) or None,
+        "phase": report.when, "reason": reason, "test": item.nodeid,
+    }
+
+
+def pytest_sessionfinish(session, exitstatus):
+    target = os.environ.get("HMS_AI_EVAL_REPORT")
+    if not target or not _ADVERSARIAL_RESULTS:
+        return
+    path = Path(target)
+    merged = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+    merged.update(_ADVERSARIAL_RESULTS)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(merged, indent=1, sort_keys=True), encoding="utf-8")
 
 
 def make_alembic_config(database_url: str, script_location: Path | None = None) -> Config:

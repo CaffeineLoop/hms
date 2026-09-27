@@ -333,7 +333,7 @@ def test_capabilities_list_only_read_only_tools(auth_client, client, make_user, 
     ok(client.post("/api/roles", json={"name": "AI_MIN", "permissions": [{"code": "ai.analysis"}]}), 201)
     minimal = ok(auth_client.get("/api/ai/capabilities", headers=make_user("AI_MIN")["headers"]))
     assert not any(t["available_to_you"] for t in minimal["tools"])
-    assert "FOUR_DAY_RISK" not in caps["analysis_types"]
+    assert "FOUR_DAY_RISK" in caps["analysis_types"]  # Stage 8
 
 
 def test_completed_analysis_is_audited_without_clinical_content(auth_client, doctor, chart, model, test_engine):
