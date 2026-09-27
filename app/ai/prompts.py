@@ -53,17 +53,26 @@ B. The "signals" in <risk_context> were computed by a deterministic rule set tha
    validated. Return EVERY signal exactly once in "risk_signals" with the same signal_id, category
    and priority. Do not add signals of your own and do not re-grade them. A signal's "evidence"
    may only contain source_ids listed for that signal.
-C. Explain each signal as a potential concern that may warrant clinical review (use words such as
-   "potential", "possible", "may"). Never say that something will happen, is certain or confirmed,
-   or that the patient has a diagnosis. Never give probabilities or percentages. Avoid the word "will".
+C. Explain each signal as a potential concern that may warrant clinical review: every "explanation"
+   must contain a word such as "potential", "possible" or "may". Never say that something will happen,
+   is certain or confirmed, or that the patient has a diagnosis. Never give probabilities or
+   percentages. Avoid the word "will".
+   Explain only what the recorded values show. Do not suggest causes or differential diagnoses, and
+   never name a condition, medication, symptom or clinical event unless that exact word appears in the
+   evidence (for example, do not write "may reflect dehydration or infection" unless the records say so).
 D. "observed_trends": only patterns visible in the evidence, each with the source_ids it relies on.
 E. "precautionary_suggestions": only review-oriented items for a clinician (for example
    "Clinician may wish to review / verify / reassess ..."). Never recommend or name treatments,
    medicines, doses, tests to order, admission, discharge or transfer.
-F. "limitations": include the data gaps listed in <risk_context> and state that the signal rules are
-   not clinically validated.
+F. "limitations": include the data gaps listed in <risk_context> and state in plain words that the signal
+   rules are not clinically validated (do not quote field names or values from <risk_context>).
 G. If there are no signals, say the rule set identified no potential risk signals in the available
    evidence, and that this does not indicate low risk.
+H. Output shape: each "risk_signals" item has exactly the keys "signal_id", "category", "priority",
+   "explanation" and "evidence". Do not copy the "title", "detail" or "rule_id" keys from
+   <risk_context>; write the "explanation" yourself, following rule C.
+I. Refer only to the four-day horizon (for example "within the four-day horizon"); never mention any
+   other period such as "the next few days", "coming weeks" or "long-term".
 """
 
 RISK_HUMAN_PROMPT = HUMAN_PROMPT + """

@@ -26,8 +26,13 @@ class EncounterService:
         self._context = ClinicalContext(session)
         self._directory = StaffDirectory(session)
 
-    def get(self, encounter_id: uuid.UUID) -> Encounter:
-        return self._get_or_404(encounter_id)
+    def get(self, encounter_id: uuid.UUID, *, patient_id: uuid.UUID | None = None) -> Encounter:
+        """When `patient_id` is given the encounter must belong to that patient; otherwise it is the same 404 as
+        an unknown id, so nothing about another patient's chart leaks. (Read scope is checked by the route.)"""
+        encounter = self._get_or_404(encounter_id)
+        if patient_id is not None and encounter.patient_id != patient_id:
+            raise NotFoundError(f"Encounter {encounter_id} not found.")
+        return encounter
 
     def list_for_patient(self, patient_id: uuid.UUID, params: EncounterListParams) -> tuple[list[Encounter], int]:
         self._context.patient(patient_id)

@@ -28,7 +28,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query, Response, status
 from sqlalchemy.orm import Session
 
-from app.api.auth import requires
+from app.api.auth import requires, requires_clinical_read
 from app.api.authorship import bind_actor
 from app.core.permissions import P
 from app.core.principal import Principal
@@ -106,12 +106,12 @@ def create_lab_order(patient_id: uuid.UUID, data: LabOrderCreate, response: Resp
     return order
 
 
-@router.get(f"{PATIENT}/lab-orders", response_model=Page[LabOrderRead], responses=_ERRORS, tags=LAB, dependencies=[requires(P.LAB_VIEW)])
+@router.get(f"{PATIENT}/lab-orders", response_model=Page[LabOrderRead], responses=_ERRORS, tags=LAB, dependencies=[requires_clinical_read(P.LAB_VIEW)])
 def list_lab_orders(patient_id: uuid.UUID, params: Annotated[LabOrderListParams, Query()], service: Labs):
     return _page(LabOrderRead, service.list_for_patient(patient_id, params), params)
 
 
-@router.get("/lab-orders/{order_id}", response_model=LabOrderRead, responses=_ERRORS, tags=LAB, dependencies=[requires(P.LAB_VIEW)])
+@router.get("/lab-orders/{order_id}", response_model=LabOrderRead, responses=_ERRORS, tags=LAB, dependencies=[requires_clinical_read(P.LAB_VIEW)])
 def get_lab_order(order_id: uuid.UUID, service: Labs):
     return service.get(order_id)
 
@@ -152,12 +152,12 @@ def cancel_lab_order(order_id: uuid.UUID, data: CancelRequest, service: Labs):
     return service.cancel(order_id, data)
 
 
-@router.get("/lab-samples/{sample_id}", response_model=LabSampleRead, responses=_ERRORS, tags=LAB, dependencies=[requires(P.LAB_VIEW)])
+@router.get("/lab-samples/{sample_id}", response_model=LabSampleRead, responses=_ERRORS, tags=LAB, dependencies=[requires_clinical_read(P.LAB_VIEW)])
 def get_lab_sample(sample_id: uuid.UUID, service: Labs):
     return service.get_sample(sample_id)
 
 
-@router.get("/lab-results/{result_id}", response_model=LabResultRead, responses=_ERRORS, tags=LAB, dependencies=[requires(P.LAB_VIEW)])
+@router.get("/lab-results/{result_id}", response_model=LabResultRead, responses=_ERRORS, tags=LAB, dependencies=[requires_clinical_read(P.LAB_VIEW)])
 def get_lab_result(result_id: uuid.UUID, service: Labs):
     return service.get_result(result_id)
 
@@ -182,12 +182,12 @@ def create_report(patient_id: uuid.UUID, data: ReportCreate, response: Response,
     return report
 
 
-@router.get(f"{PATIENT}/reports", response_model=Page[ReportRead], responses=_ERRORS, tags=REPORTS, dependencies=[requires(P.REPORT_VIEW)])
+@router.get(f"{PATIENT}/reports", response_model=Page[ReportRead], responses=_ERRORS, tags=REPORTS, dependencies=[requires_clinical_read(P.REPORT_VIEW)])
 def list_reports(patient_id: uuid.UUID, params: Annotated[ReportListParams, Query()], service: Reports):
     return _page(ReportRead, service.list_for_patient(patient_id, params), params)
 
 
-@router.get("/reports/{report_id}", response_model=ReportRead, responses=_ERRORS, tags=REPORTS, dependencies=[requires(P.REPORT_VIEW)])
+@router.get("/reports/{report_id}", response_model=ReportRead, responses=_ERRORS, tags=REPORTS, dependencies=[requires_clinical_read(P.REPORT_VIEW)])
 def get_report(report_id: uuid.UUID, service: Reports):
     return service.get(report_id)
 
@@ -227,13 +227,13 @@ def create_prescription(patient_id: uuid.UUID, data: PrescriptionCreate, respons
     return prescription
 
 
-@router.get(f"{PATIENT}/prescriptions", response_model=Page[PrescriptionRead], responses=_ERRORS, tags=RX, dependencies=[requires(P.PRESCRIPTION_VIEW)])
+@router.get(f"{PATIENT}/prescriptions", response_model=Page[PrescriptionRead], responses=_ERRORS, tags=RX, dependencies=[requires_clinical_read(P.PRESCRIPTION_VIEW)])
 def list_prescriptions(patient_id: uuid.UUID, params: Annotated[PrescriptionListParams, Query()],
                        service: Prescriptions):
     return _page(PrescriptionRead, service.list_for_patient(patient_id, params), params)
 
 
-@router.get("/prescriptions/{prescription_id}", response_model=PrescriptionRead, responses=_ERRORS, tags=RX, dependencies=[requires(P.PRESCRIPTION_VIEW)])
+@router.get("/prescriptions/{prescription_id}", response_model=PrescriptionRead, responses=_ERRORS, tags=RX, dependencies=[requires_clinical_read(P.PRESCRIPTION_VIEW)])
 def get_prescription(prescription_id: uuid.UUID, service: Prescriptions):
     return service.get(prescription_id)
 

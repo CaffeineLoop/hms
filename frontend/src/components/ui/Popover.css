@@ -1,0 +1,38 @@
+.popover { position: relative; display: inline-flex; }
+.popover__panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  z-index: var(--z-popover);
+  max-width: calc(100vw - 24px);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  animation: pop-in var(--duration-fast) var(--ease);
+  overflow: hidden;
+}
+.popover__panel--end { right: 0; }
+.popover__panel--start { left: 0; }
+@keyframes pop-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .popover__panel { animation: none; } }
+
+.menu { display: flex; flex-direction: column; padding: var(--space-1); }
+.menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: 8px var(--space-3);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text);
+  font-size: var(--text-base);
+  text-align: left;
+  text-decoration: none;
+}
+.menu__item:hover { background: var(--gray-100); text-decoration: none; }
+.menu__item:focus-visible { outline: none; box-shadow: inset var(--focus-ring); }
+.menu__item--danger { color: var(--danger-fg); }
+.menu__item--danger:hover { background: var(--danger-bg); }
+.menu__sep { height: 1px; margin: var(--space-1) 0; background: var(--border); }

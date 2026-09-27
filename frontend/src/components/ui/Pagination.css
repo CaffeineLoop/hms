@@ -1,0 +1,15 @@
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  border-top: 1px solid var(--border);
+  background: var(--gray-25);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+.pagination__summary { font-size: var(--text-sm); color: var(--text-muted); }
+.pagination__summary strong { color: var(--text-strong); font-weight: var(--weight-semibold); }
+.pagination__controls { display: flex; align-items: center; gap: var(--space-2); }
+.pagination__page { font-size: var(--text-sm); color: var(--text-subtle); margin-right: var(--space-2); }

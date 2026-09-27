@@ -1,0 +1,36 @@
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field__label { font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--text); }
+.field__required { color: var(--danger-solid); margin-left: 3px; }
+.field__hint { font-size: var(--text-xs); color: var(--text-subtle); }
+.field__error { display: flex; align-items: center; gap: 5px; font-size: var(--text-xs); color: var(--danger-fg); font-weight: var(--weight-medium); }
+
+.input {
+  width: 100%;
+  height: var(--control-h-md);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  color: var(--text-strong);
+  font-size: var(--text-base);
+  box-shadow: var(--shadow-xs);
+  transition: border-color var(--duration-fast) var(--ease), box-shadow var(--duration-fast) var(--ease);
+}
+.input::placeholder { color: var(--text-disabled); }
+.input:hover:not(:disabled) { border-color: var(--gray-400); }
+.input:focus { outline: none; border-color: var(--primary-500); box-shadow: var(--focus-ring); }
+.input:disabled { background: var(--surface-sunken); color: var(--text-disabled); cursor: not-allowed; }
+.input[aria-invalid="true"] { border-color: var(--danger-solid); }
+.input[aria-invalid="true"]:focus { box-shadow: var(--focus-ring-danger); }
+
+.textarea { height: auto; padding: var(--space-2) var(--space-3); line-height: var(--leading-normal); resize: vertical; }
+
+.input-group { position: relative; display: flex; align-items: center; width: 100%; }
+.input-group--icon .input { padding-left: 36px; }
+.input-group--suffix .input { padding-right: 40px; }
+.input-group__icon { position: absolute; left: 11px; color: var(--text-subtle); pointer-events: none; }
+.input-group__suffix { position: absolute; right: 8px; display: flex; align-items: center; color: var(--text-subtle); }
+
+.select { position: relative; display: flex; width: 100%; }
+.select__control { appearance: none; padding-right: 34px; cursor: pointer; }
+.select__chevron { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--text-subtle); pointer-events: none; }

@@ -39,6 +39,12 @@ append-only audit trail.
 Administrators create staff, users and roles through the API. No default role holds `ai.analysis`
 or `ai.review`; grant them deliberately.
 
+## Web UI (UI track)
+
+`frontend/` — React + TypeScript (Vite) UI consuming the existing API through a same-origin proxy.
+`cd frontend && npm install && npm run dev` (set `HMS_API_TARGET` to the backend URL; default
+`http://127.0.0.1:8000`). See `frontend/README.md`.
+
 ## Tests
 
 - `pytest tests/unit` — no database.

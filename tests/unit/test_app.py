@@ -86,6 +86,7 @@ def test_openapi_schema_lists_only_expected_endpoints(offline_settings):
         "/api/patients/{patient_id}/deactivate",
         "/api/patients/{patient_id}/reactivate",
         "/api/patients/{patient_id}/encounters",
+        "/api/patients/{patient_id}/encounters/{encounter_id}",
         "/api/patients/{patient_id}/observations",
         "/api/patients/{patient_id}/conditions",
         "/api/patients/{patient_id}/allergies",

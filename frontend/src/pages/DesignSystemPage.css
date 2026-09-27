@@ -1,0 +1,14 @@
+.ds { --stack-gap: var(--space-6); }
+.ds__label { margin-bottom: var(--space-2); font-size: var(--text-xs); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--text-subtle); }
+.ds__swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: var(--space-3); }
+.ds__swatch { display: flex; flex-direction: column; gap: 6px; }
+.ds__swatch span { height: 40px; border-radius: var(--radius-md); border: 1px solid var(--border); }
+.ds__swatch code, .ds__type code { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+.ds__type { display: grid; grid-template-columns: 110px 1fr; align-items: baseline; gap: var(--space-4); }
+.ds__form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); }
+.ds__span2 { grid-column: span 2; }
+.ds__stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); }
+@media (max-width: 720px) {
+  .ds__form { grid-template-columns: 1fr; }
+  .ds__span2 { grid-column: auto; }
+}

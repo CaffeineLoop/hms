@@ -22,7 +22,7 @@ from sqlalchemy.orm import Session
 
 from app.core.audit import request_context
 from app.core.errors import AuthenticationError, PermissionDeniedError
-from app.core.permissions import P
+from app.core.permissions import P, Scope
 from app.core.principal import Principal
 from app.db.session import get_db
 from app.services.auth_service import AuthService
@@ -71,4 +71,52 @@ def requires_any(*permissions: P):
         return principal
 
     check.required_permissions = tuple(permissions)
+    return Depends(check)
+
+
+CLINICAL_SCOPE_DENIED = "You are not permitted to view patients' clinical records."
+
+
+def requires_clinical_read(permission: P):
+    """Dependency for reading patient clinical records: `permission` AND patient.view, both at ALL scope.
+
+    OWN grants no record-level access to clinical records (see app/core/permissions.py), so an OWN-only grant
+    is refused like the AI service does. Runs before the handler loads anything, so a denied caller learns
+    nothing about the requested record - not even whether it exists.
+    """
+
+    def check(principal: CurrentPrincipal) -> Principal:
+        needed = (permission, P.PATIENT_VIEW)
+        missing = sorted(str(p) for p in needed if not principal.has(p))
+        if missing:
+            raise PermissionDeniedError(f"Missing permission: {', '.join(missing)}.")
+        if any(principal.scope(p) != Scope.ALL for p in needed):
+            raise PermissionDeniedError(CLINICAL_SCOPE_DENIED)
+        return principal
+
+    check.required_permissions = (permission, P.PATIENT_VIEW)
+    return Depends(check)
+
+
+CLINICAL_WRITE_SCOPE_DENIED = (
+    "Your {permission} permission is limited to your own records (OWN scope); "
+    "writing patient clinical records requires it for all patients (ALL scope)."
+)
+
+
+def requires_clinical_write(permission: P):
+    """Dependency for writing patient clinical records: `permission` held at ALL scope.
+
+    Clinical records have no owner notion, so OWN grants no record-level access (see app/core/permissions.py):
+    an OWN-only grant is refused with 403, like the clinical-read rule. Runs before the handler touches anything.
+    """
+
+    def check(principal: CurrentPrincipal) -> Principal:
+        if not principal.has(permission):
+            raise PermissionDeniedError(f"Missing permission: {permission}.")
+        if principal.scope(permission) != Scope.ALL:
+            raise PermissionDeniedError(CLINICAL_WRITE_SCOPE_DENIED.format(permission=permission))
+        return principal
+
+    check.required_permissions = (permission,)
     return Depends(check)

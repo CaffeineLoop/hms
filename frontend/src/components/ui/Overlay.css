@@ -1,0 +1,73 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  background: rgba(16, 28, 37, 0.42);
+  animation: fade-in var(--duration-base) var(--ease);
+}
+.overlay--center { align-items: flex-start; justify-content: center; padding: 10vh var(--space-4) var(--space-4); overflow-y: auto; }
+.overlay--right { justify-content: flex-end; }
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 80vh;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  animation: rise var(--duration-base) var(--ease);
+}
+.dialog:focus { outline: none; }
+.dialog--sm { max-width: 440px; }
+.dialog--md { max-width: 560px; }
+.dialog--lg { max-width: 760px; }
+.dialog__header, .drawer__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-5) var(--space-3);
+}
+.dialog__title { font-size: var(--text-xl); font-weight: var(--weight-semibold); }
+.dialog__description { margin-top: 4px; font-size: var(--text-sm); color: var(--text-muted); }
+.dialog__body { padding: var(--space-2) var(--space-5) var(--space-5); overflow-y: auto; }
+.dialog__text { color: var(--text); line-height: var(--leading-normal); }
+.dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-top: 1px solid var(--border);
+  background: var(--gray-25);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.drawer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--surface-raised);
+  border-left: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  animation: slide-in var(--duration-base) var(--ease);
+}
+.drawer:focus { outline: none; }
+.drawer--sm { max-width: 380px; }
+.drawer--md { max-width: 480px; }
+.drawer--lg { max-width: 640px; }
+.drawer__header { border-bottom: 1px solid var(--border); padding-bottom: var(--space-4); }
+.drawer__body { flex: 1; padding: var(--space-5); overflow-y: auto; }
+.drawer .dialog__footer { border-radius: 0; }
+
+.confirm-type { display: flex; flex-direction: column; gap: 6px; font-size: var(--text-sm); color: var(--text-muted); }
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes slide-in { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .overlay, .dialog, .drawer { animation: none; }
+}

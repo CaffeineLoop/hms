@@ -215,9 +215,11 @@ def test_timeline_only_shows_permitted_event_types(client, auth_client, make_use
             {"medicine_name": "Paracetamol", "dose_value": 1, "dose_unit": "g", "route": "ORAL", "frequency": "QID"}]}), 201)
     rx = ok(client.get(f"/api/patients/{patient_id}/prescriptions"))["items"][0]
     ok(client.post(f"/api/prescriptions/{rx['id']}/activate"))
-    ok(client.post("/api/roles", json={"name": "TIMELINE_ONLY", "permissions": [{"code": "timeline.view"}]}), 201)
+    # Clinical reads also need patient.view at ALL scope (see requires_clinical_read).
+    ok(client.post("/api/roles", json={"name": "TIMELINE_ONLY", "permissions": [
+        {"code": "timeline.view"}, {"code": "patient.view"}]}), 201)
     ok(client.post("/api/roles", json={"name": "TIMELINE_RX", "permissions": [
-        {"code": "timeline.view"}, {"code": "prescription.view"}]}), 201)
+        {"code": "timeline.view"}, {"code": "patient.view"}, {"code": "prescription.view"}]}), 201)
     doctor, only, rx_viewer = make_user("DOCTOR"), make_user("TIMELINE_ONLY"), make_user("TIMELINE_RX")
     kinds = lambda u: [e["event_type"] for e in ok(as_(auth_client, u, "GET", f"/api/patients/{patient_id}/timeline"))["items"]]
     assert sorted(kinds(doctor)) == ["encounter", "prescription"]

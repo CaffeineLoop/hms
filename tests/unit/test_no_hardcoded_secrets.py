@@ -10,7 +10,8 @@ from sqlalchemy.engine import make_url
 from app.core.config import ConfigurationError, load_settings
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-EXCLUDED_DIRS = {".venv", "venv", ".git", "__pycache__", ".pytest_cache", ".idea", ".vscode"}
+EXCLUDED_DIRS = {".venv", "venv", ".git", "__pycache__", ".pytest_cache", ".idea", ".vscode",
+                 "node_modules", "dist"}  # UI track: installed JS packages and build output (git-ignored)
 EXCLUDED_FILES = {".env"}  # the only place real values may live; git-ignored
 TEXT_SUFFIXES = {".py", ".ini", ".toml", ".cfg", ".txt", ".md", ".mako", ".example", ".sql", ".json", ".yml", ".yaml"}
 

@@ -1,0 +1,21 @@
+/* UI-3 write flows */
+.author-statement { margin: 0; padding: var(--space-3) var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--gray-25); font-size: var(--text-sm); }
+.picked { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-raised); }
+.patient-picker { display: grid; gap: var(--space-2); }
+.picker-results { margin: 0; padding: 0; list-style: none; border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+.picker-results li + li { border-top: 1px solid var(--border); }
+.picker-results__item { display: block; width: 100%; padding: 10px 12px; border: 0; background: var(--surface-raised); text-align: left; font: inherit; cursor: pointer; }
+.picker-results__item:hover, .picker-results__item:focus-visible { background: var(--primary-50); outline: none; }
+.picker-empty { margin: 0; font-size: var(--text-sm); }
+.action-bar { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.vitals-form { display: grid; gap: var(--space-4); }
+.vitals-form__row { display: grid; grid-template-columns: minmax(180px, 1.2fr) minmax(0, 2fr); align-items: start; gap: var(--space-4); padding-bottom: var(--space-4); border-bottom: 1px solid var(--border); }
+.vitals-form__row:last-child { border-bottom: 0; padding-bottom: 0; }
+.vitals-form__label { padding-top: 30px; font-weight: var(--weight-medium); color: var(--text-strong); }
+.vitals-form__inputs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.save-report { margin: 0; padding-left: var(--space-5); font-size: var(--text-sm); }
+@media (max-width: 900px) {
+  .vitals-form__row { grid-template-columns: 1fr; }
+  .vitals-form__label { padding-top: 0; }
+}
+.cluster--between { justify-content: space-between; }

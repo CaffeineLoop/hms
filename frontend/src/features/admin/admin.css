@@ -1,0 +1,29 @@
+/* UI-4 administration */
+.admin-tag { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: var(--radius-sm); border: 1px solid; font-size: var(--text-xs); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-caps); text-transform: uppercase; white-space: nowrap; }
+.admin-tag--config { color: var(--primary-700); background: var(--primary-50); border-color: var(--primary-200); }
+.admin-tag--audit { color: var(--record-fg); background: var(--gray-25); border-color: var(--gray-300); }
+.admin-tag--session { color: var(--system-fg); background: var(--system-bg); border-color: var(--system-border); }
+.admin-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-4); }
+.admin-head__title { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+.admin-head__title h2 { margin: 0; font-size: var(--text-lg); color: var(--text-strong); }
+.grant-group { margin: 0; padding: 0; list-style: none; }
+.grant-domain { padding: var(--space-2) var(--space-5); background: var(--gray-25); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  font-size: var(--text-xs); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--text-subtle); }
+.grant-row { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(0, 2fr) auto auto; align-items: center; gap: var(--space-3);
+  padding: 10px var(--space-5); border-bottom: 1px solid var(--border); font-size: var(--text-sm); }
+.grant-row:last-child { border-bottom: 0; }
+.grant-row__desc { color: var(--text-muted); }
+.chips-inline { display: flex; flex-wrap: wrap; gap: 6px; }
+.kv { margin: 0; display: grid; grid-template-columns: minmax(140px, 220px) minmax(0, 1fr); gap: 6px var(--space-4); font-size: var(--text-sm); }
+.kv dt { color: var(--text-muted); }
+.kv dd { margin: 0; word-break: break-word; }
+.audit-filters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-3); align-items: end; }
+.audit-filters__actions { display: flex; gap: var(--space-2); justify-content: flex-end; }
+.stack-sm { display: grid; gap: var(--space-3); }
+@media (max-width: 1100px) { .audit-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  .grant-row { grid-template-columns: 1fr auto; }
+  .grant-row__desc { grid-column: 1 / -1; }
+  .kv { grid-template-columns: 1fr; }
+}
+.card-inset { padding: var(--space-4) var(--space-5); border-top: 1px solid var(--border); }

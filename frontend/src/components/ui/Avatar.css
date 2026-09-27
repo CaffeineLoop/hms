@@ -1,0 +1,12 @@
+.avatar {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+.avatar--primary { background: var(--primary-100); color: var(--primary-800); }
+.avatar--neutral { background: var(--gray-150); color: var(--gray-700); }

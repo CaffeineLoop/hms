@@ -1,0 +1,193 @@
+/*
+ * HMS design tokens — the single source of truth for the visual language.
+ * Components reference these variables only; never raw colours or sizes.
+ *
+ * Semantic families:
+ *   primary        brand / interactive (calm clinical teal-blue)
+ *   success/warning/danger/info/neutral   status
+ *   record         a documented clinical record (solid, authoritative)
+ *   system         system / workflow status (quiet, informational)
+ *   ai             AI-generated suggestion (distinct violet, dashed — never looks like a record)
+ */
+:root {
+  /* ---- neutrals (cool gray) ---- */
+  --gray-0: #ffffff;
+  --gray-25: #fbfcfd;
+  --gray-50: #f6f8fa;
+  --gray-100: #eef1f4;
+  --gray-150: #e4e8ed;
+  --gray-200: #d5dbe2;
+  --gray-300: #b9c2cd;
+  --gray-400: #8a96a5;
+  --gray-500: #677384;
+  --gray-600: #4d5868;
+  --gray-700: #394352;
+  --gray-800: #252d39;
+  --gray-900: #161c25;
+
+  /* ---- primary ---- */
+  --primary-25: #f5fafb;
+  --primary-50: #eef6f8;
+  --primary-100: #d5eaef;
+  --primary-200: #a9d3dd;
+  --primary-400: #3d97aa;
+  --primary-500: #1b7f95;
+  --primary-600: #13687c;
+  --primary-700: #0f5566;
+  --primary-800: #0c4452;
+
+  /* ---- status ---- */
+  --success-bg: #edf7f1;
+  --success-border: #bfe3cd;
+  --success-fg: #17663d;
+  --success-solid: #1e8049;
+
+  --warning-bg: #fdf6e7;
+  --warning-border: #f2dca7;
+  --warning-fg: #7f5300;
+  --warning-solid: #b77a06;
+
+  --danger-bg: #fdf0ef;
+  --danger-border: #f4c7c3;
+  --danger-fg: #a12b22;
+  --danger-solid: #c4372c;
+
+  --info-bg: #eef4fb;
+  --info-border: #c6daf1;
+  --info-fg: #1f5596;
+  --info-solid: #2a6bb8;
+
+  --neutral-bg: var(--gray-100);
+  --neutral-border: var(--gray-200);
+  --neutral-fg: var(--gray-700);
+  --neutral-solid: var(--gray-500);
+
+  /* ---- provenance (record vs system vs AI) ---- */
+  --record-fg: var(--gray-800);
+  --record-bg: var(--gray-0);
+  --record-rule: var(--gray-700);
+
+  --system-fg: #3e5670;
+  --system-bg: #f1f5f9;
+  --system-border: #d3dde8;
+
+  --ai-fg: #4e3f9a;
+  --ai-bg: #f6f4fd;
+  --ai-border: #cfc6ef;
+  --ai-accent: #6a58c4;
+
+  /* ---- surfaces & text ---- */
+  --surface-app: var(--gray-50);
+  --surface-raised: var(--gray-0);
+  --surface-sunken: var(--gray-100);
+  --surface-sidebar: #10202a;
+  --surface-sidebar-hover: #182d39;
+  --surface-sidebar-active: #1f3b4a;
+
+  --text-strong: var(--gray-900);
+  --text: var(--gray-800);
+  --text-muted: var(--gray-600);
+  --text-subtle: var(--gray-500);
+  --text-disabled: var(--gray-400);
+  --text-inverse: #ffffff;
+  --text-on-sidebar: #c3d0d8;
+  --text-on-sidebar-strong: #ffffff;
+  --text-link: var(--primary-600);
+
+  --border: var(--gray-150);
+  --border-strong: var(--gray-200);
+  --border-input: var(--gray-300);
+
+  /* ---- typography ---- */
+  --font-sans: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, monospace;
+
+  --text-xs: 0.75rem;    /* 12 */
+  --text-sm: 0.8125rem;  /* 13 */
+  --text-base: 0.875rem; /* 14 — body */
+  --text-md: 0.9375rem;  /* 15 */
+  --text-lg: 1rem;       /* 16 */
+  --text-xl: 1.125rem;   /* 18 */
+  --text-2xl: 1.25rem;   /* 20 */
+  --text-3xl: 1.5rem;    /* 24 */
+  --text-4xl: 1.875rem;  /* 30 */
+
+  --leading-tight: 1.25;
+  --leading-snug: 1.4;
+  --leading-normal: 1.5;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 650;
+
+  --tracking-tight: -0.011em;
+  --tracking-heading: -0.017em;
+  --tracking-caps: 0.06em;
+
+  /* ---- spacing (4px grid) ---- */
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 1.75rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* ---- radii (restrained) ---- */
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 999px;
+
+  /* ---- elevation (subtle) ---- */
+  --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.07), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-md: 0 10px 22px -8px rgba(16, 24, 40, 0.16), 0 4px 8px -4px rgba(16, 24, 40, 0.06);
+  --shadow-lg: 0 24px 48px -12px rgba(16, 24, 40, 0.22);
+
+  /* ---- focus ---- */
+  --focus-ring: 0 0 0 3px rgba(27, 127, 149, 0.3);
+  --focus-ring-danger: 0 0 0 3px rgba(196, 55, 44, 0.25);
+
+  /* ---- controls ---- */
+  --control-h-sm: 30px;
+  --control-h-md: 36px;
+  --control-h-lg: 42px;
+
+  /* ---- layout ---- */
+  --sidebar-w: 248px;
+  --sidebar-w-collapsed: 68px;
+  --topbar-h: 60px;
+  --content-max: 1440px;
+  --content-pad: var(--space-8);
+
+  /* ---- motion (restrained) ---- */
+  --duration-fast: 120ms;
+  --duration-base: 180ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  /* ---- layers ---- */
+  --z-sticky: 10;
+  --z-sidebar: 30;
+  --z-popover: 40;
+  --z-overlay: 50;
+  --z-modal: 60;
+  --z-toast: 70;
+}
+
+@media (max-width: 1280px) {
+  :root { --content-pad: var(--space-6); }
+}
+@media (max-width: 768px) {
+  :root { --content-pad: var(--space-4); }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --duration-fast: 0ms; --duration-base: 0ms; }
+}
