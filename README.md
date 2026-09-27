@@ -1,73 +1,338 @@
-# Hospital Management System (HMS) — MVP
+# Hospital Management System (HMS)
 
-A FastAPI + PostgreSQL hospital management system with a bounded, read-only AI clinical-analysis
-assistant. **Prototype / MVP: not production-ready and not clinically validated.**
+A full-stack Hospital Management System for managing patients, clinical records, diagnostics, prescriptions, staff workflows, authentication, RBAC, audit logs, and a bounded AI clinical analysis workflow.
 
-## Modules
+The backend is the source of truth for patient and clinical data. The AI layer is read-only and produces four-day risk signals for clinician review; it does not diagnose, prescribe, order tests, or modify clinical records.
 
-| Module | Stage | Main API prefixes |
-|---|---|---|
-| Patient management | 1 | `/api/patients` |
-| Clinical records & timeline | 2 | `/api/patients/{id}/encounters|observations|conditions|allergies|clinical-notes|timeline` |
-| Diagnostics, laboratory, reports, prescriptions | 3 | `/api/patients/{id}/lab-orders|reports|prescriptions`, `/api/lab-orders`, `/api/reports`, `/api/prescriptions` |
-| Staff & hospital workflows | 4 | `/api/staff`, `/api/departments`, `/api/appointments`, `/api/admissions`, `/api/workflow-tasks` |
-| Authentication & dynamic RBAC | 5 | `/api/auth`, `/api/users`, `/api/roles`, `/api/permissions` |
-| Audit, security & hardening | 6 | `/api/audit-events` |
-| AI assistant (read-only analysis) | 7 | `/api/ai/capabilities`, `/api/ai/analyses` |
-| Four-day potential risk analysis + human review | 8 | `/api/ai/analyses` (`FOUR_DAY_RISK`), `/api/ai/risk-analyses` |
-| AI guardrails & adversarial evaluation | 9–10 | see `docs/ai-evaluation/` |
+## Stack
 
-Layering: **Router → Service → Repository → SQLAlchemy → PostgreSQL**. Schema changes only through
-Alembic (`alembic/versions`, linear chain 0001–0010). Every protected route declares its permission;
-authorship is bound to the authenticated staff member; security-relevant actions go to an
-append-only audit trail.
+### Backend
 
-## Setup (local)
+* Python 3.12
+* FastAPI
+* PostgreSQL 17
+* SQLAlchemy 2.0
+* psycopg 3
+* Alembic
+* Pydantic
+* pytest
+* HTTPX
 
-1. Provision the least-privilege role and the two databases (as a PostgreSQL superuser; the password is
-   supplied at run time and never stored):
-   `psql -U postgres -h localhost -v app_password="<choose one>" -f scripts/provision_databases.sql`
-2. `python -m venv .venv` and `pip install -r requirements-dev.txt`
-3. Copy `.env.example` to `.env` (git-ignored) and fill in `DATABASE_URL` (hms_dev) and
-   `TEST_DATABASE_URL` (hms_test). For the live AI set `GEMINI_API_KEY`; for offline use set
-   `LLM_PROVIDER=fake`.
-4. `alembic upgrade head`
-5. Create the first administrator: `python -m app.cli create-admin --username admin --employee-code ADM-0001 --first-name ... --last-name ...`
-   (password from `HMS_ADMIN_PASSWORD` or an interactive prompt).
-6. Run: `uvicorn app.main:app --reload` (OpenAPI docs at `/docs` outside production).
+### Frontend
 
-Administrators create staff, users and roles through the API. No default role holds `ai.analysis`
-or `ai.review`; grant them deliberately.
+* React 19
+* TypeScript
+* Vite
+* React Router
+* CSS with shared design tokens/components
+* Inter font
+* oxlint
 
-## Web UI (UI track)
+### Authentication / Security
 
-`frontend/` — React + TypeScript (Vite) UI consuming the existing API through a same-origin proxy.
-`cd frontend && npm install && npm run dev` (set `HMS_API_TARGET` to the backend URL; default
-`http://127.0.0.1:8000`). See `frontend/README.md`.
+* Server-side opaque bearer sessions
+* SHA-256 token hashes stored in DB
+* scrypt password hashing
+* Dynamic RBAC
+* Permission scopes: `ALL`, `OWN`
+* Append-only audit events
+* Session idle timeout and revocation
+* Login failure lockout/rate limiting
+* Security headers and request IDs
+
+### AI
+
+* LangGraph
+* LangChain
+* `langchain-openai` for OpenAI-compatible providers
+* OpenRouter
+* `inclusionai/ling-3.0-flash-sante:free`
+* Gemini provider support retained
+* Fake/deterministic provider for tests
+* Pydantic/schema validation
+* Prompt-injection, grounding, horizon and overreach checks
+
+## Main modules
+
+* Patient management
+* Encounters and clinical timeline
+* Observations / vitals
+* Conditions
+* Allergies
+* Clinical notes
+* Laboratory orders, samples and results
+* Reports
+* Prescriptions
+* Departments and staff
+* Appointments
+* Admissions and transfers
+* Workflow tasks
+* Authentication and sessions
+* Users, roles and permissions
+* Audit trail
+* AI clinical analysis
+* Four-day risk analysis and clinician review
+
+## Architecture
+
+```text
+React frontend
+      │
+      ▼
+FastAPI API
+      │
+      ├── Auth / RBAC
+      ├── Patient & clinical services
+      ├── Workflow services
+      ├── Audit
+      └── AI service
+             │
+             ├── read-only clinical tools
+             ├── evidence/context assembly
+             ├── LLM
+             ├── structured validation
+             ├── grounding / safety checks
+             └── human review
+      │
+      ▼
+PostgreSQL
+```
+
+Clinical data is never written by the AI layer.
+
+## AI workflow
+
+The current stored analysis workflow is:
+
+```text
+Patient context
+    ↓
+Permission check
+    ↓
+Read-only clinical tools
+    ↓
+Evidence assembly
+    ↓
+Rule-based risk signals
+    ↓
+LLM explanation
+    ↓
+Schema / semantic validation
+    ↓
+Grounding + safety checks
+    ↓
+Stored analysis
+    ↓
+Clinician review
+```
+
+The four-day risk analysis uses the `demo-v1` signal ruleset.
+
+`demo-v1` is a demonstration ruleset and is **not clinically validated**.
+
+AI output is explicitly treated as:
+
+```text
+Observe → Analyze → Explain → Suggest for review → Stop
+```
+
+## Data
+
+The project uses synthetic/demo clinical data.
+
+The clinical model was designed with future Synthea data compatibility in mind, but a dedicated Synthea import pipeline is not part of the current application.
+
+No real patient data should be committed to the repository.
+
+## Repository structure
+
+```text
+hms/
+├── app/
+│   ├── api/
+│   ├── ai/
+│   ├── models/
+│   ├── repositories/
+│   ├── schemas/
+│   ├── services/
+│   └── main.py
+├── alembic/
+├── tests/
+├── frontend/
+│   ├── src/
+│   └── ...
+├── scratchpad/
+├── .env.example
+└── ...
+```
+
+## Local setup
+
+### 1. Backend
+
+Create/activate the virtual environment and install dependencies:
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+Configure `.env` with at least:
+
+```env
+APP_ENV=development
+
+DATABASE_URL=postgresql+psycopg://...
+
+TEST_DATABASE_URL=postgresql+psycopg://...
+
+AUTH_TOKEN_TTL_MINUTES=480
+AUTH_IDLE_TIMEOUT_MINUTES=30
+
+LLM_PROVIDER=openrouter
+LLM_MODEL=inclusionai/ling-3.0-flash-sante:free
+OPENROUTER_API_KEY=...
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+
+LLM_MAX_OUTPUT_TOKENS=16384
+LLM_TEMPERATURE=0.1
+LLM_TIMEOUT_SECONDS=30
+
+AI_RISK_RULESET=demo-v1
+AI_RISK_EVIDENCE_LOOKBACK_HOURS=96
+AI_RISK_EVENT_TRIGGERS=
+```
+
+Run the API:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+API docs:
+
+```text
+http://localhost:8000/docs
+```
+
+Health check:
+
+```text
+http://localhost:8000/health
+```
+
+### 2. Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Default Vite URL:
+
+```text
+http://localhost:5173
+```
+
+For normal local use, run both the backend and frontend.
+
+## Database / migrations
+
+Development and test databases are separate.
+
+```text
+hms_dev
+hms_test
+```
+
+Use Alembic for schema changes:
+
+```bash
+alembic upgrade head
+```
+
+Do not use `create_all()` as the schema-management mechanism.
+
+The test suite is isolated from the development database.
 
 ## Tests
 
-- `pytest tests/unit` — no database.
-- `pytest tests/integration` — uses **only** `TEST_DATABASE_URL` (a guard refuses to run against the
-  development database). Destructive migration tests run on hms_test only.
-- Automated AI tests use deterministic fake models; the live provider is never called by the suite.
-- On low-memory machines run integration files one per process.
-- Adversarial AI evaluation: see `docs/ai-evaluation/stage9-adversarial-evaluation.md`
-  (`HMS_AI_EVAL_REPORT=... pytest ...` then `python scripts/ai_eval_report.py ...`).
+Backend:
 
-## AI boundary
+```bash
+pytest
+```
 
-The assistant analyses **one patient's existing records** for a clinician with `ai.analysis` and
-patient view scope ALL. It uses nine argument-free, patient-bound, permission-gated read tools inside a
-READ ONLY database transaction; it has no write tools. Output is validated (schema, citations,
-grounding of measurements and named clinical entities, overreach, certainty, patient isolation) and
-always requires human review. `FOUR_DAY_RISK` explains signals computed by a deterministic
-**demonstration rule set that is not clinically validated**, over a fixed horizon of exactly four days;
-results are stored as AI suggestions (`ai_risk_analyses`) for review by a user with `ai.review`.
-It never diagnoses, prescribes, orders tests, modifies records or executes workflow actions.
+Frontend checks:
 
-## Out of scope (by design)
+```bash
+cd frontend
+npm run build
+```
 
-Student Clinical Case Portal, de-identification, eligibility/outcome transfer, synchronisation with
-downstream systems, the Synthea/FHIR importer (compatibility is verified in
-`tests/integration/test_synthea_compatibility.py`), advanced scheduling and pharmacy inventory.
+The UI was verified through browser-based regression/integration checks during development. Those browser scripts are currently kept in the scratchpad rather than as a permanent frontend test runner.
+
+## RBAC
+
+Permissions are represented as:
+
+```text
+User
+  → UserRole
+    → Role
+      → RolePermission
+        → Permission + Scope
+```
+
+Scopes:
+
+* `ALL` — all matching records
+* `OWN` — records tied to the user's own staff context where the permission supports it
+
+Backend authorization is always authoritative. Hiding a navigation item in the frontend is not considered a security control.
+
+## Audit
+
+Important authentication, authorization, clinical and administrative actions are recorded in an append-only audit trail.
+
+Audit records are read-only through the API.
+
+Sensitive credentials and clinical text are not intended to be stored in audit metadata.
+
+## Environment notes
+
+Do not commit:
+
+```text
+.env
+API keys
+passwords
+database credentials
+real patient data
+```
+
+`.env.example` is the configuration reference; `.env` contains local secrets and is git-ignored.
+
+## Current limitations
+
+* Clinical write UI is not available for every backend workflow; some operations remain API/backend driven.
+* User-account creation is currently backend/API driven.
+* Synthea import is not yet implemented as a dedicated pipeline.
+* The frontend does not yet have a permanent Vitest/Playwright test runner.
+* AI risk rules are demonstration rules, not clinically validated decision support.
+* The active free OpenRouter model can occasionally fail output validation or hit provider limits; the HMS rejects those responses rather than accepting malformed or unsupported clinical content.
+
+## Development rules
+
+* Keep business/security rules in the backend.
+* Treat the database schema as migration-managed.
+* Keep AI read-only and patient-scoped.
+* Never weaken grounding or authorization to make a demo pass.
+* Prefer existing service/repository/API patterns over introducing parallel abstractions.
+* Use synthetic data for development and testing.
+
+## Status
+
+The current repository contains the implemented HMS backend and frontend milestone through the full UI integration pass, including the AI clinical-analysis workflow.
