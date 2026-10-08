@@ -97,8 +97,9 @@ class Settings(BaseSettings):
 
     # --- Stage 8: four-day potential risk analysis ------------------------------------------------
     # The horizon itself (4 days) is a fixed constant in app/ai/risk_signals.py, not a setting.
-    # Signal rule set (registry key). "demo-v1" is an explicitly UNVALIDATED prototype.
-    ai_risk_ruleset: str = "demo-v1"
+    # Signal rule set (registry key). PRODUCTION MUST EXPLICITLY SET AI_RISK_RULESET to a validated
+    # ruleset before deployment. "demo-v1" is an explicitly UNVALIDATED prototype for dev/test only.
+    ai_risk_ruleset: str
     # How far back before the reference time evidence is read for the risk analysis.
     ai_risk_evidence_lookback_hours: int = Field(default=96, ge=24, le=168)
     # Comma-separated event triggers; empty = manual analysis only. Supported: observation.created

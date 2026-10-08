@@ -153,8 +153,11 @@ def test_ruleset_is_explicitly_unvalidated_and_replaceable():
     assert RULESETS == {"demo-v1": DEMO_V1}
     assert DEMO_V1.validated is False and "NOT clinically validated" in DEMO_V1.description
     assert "NOT clinically validated" in UNVALIDATED_NOTICE
-    assert load_settings().ai_risk_ruleset == "demo-v1"
+    # Production must explicitly set AI_RISK_RULESET; missing value raises ConfigurationError
     with pytest.raises(Exception, match="AI_RISK_RULESET"):
+        load_settings()
+    # Invalid ruleset names are rejected
+    with pytest.raises(Exception, match="must be one of"):
         load_settings(ai_risk_ruleset="validated-v9")
 
 
